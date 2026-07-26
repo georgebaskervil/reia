@@ -1,2 +1,3 @@
 *.reb
 *.rbc
+erl_crash.dump
