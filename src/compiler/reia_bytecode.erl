@@ -74,7 +74,7 @@ module_header(Name, Filename, CustomAttrs, Options) ->
     fun({AttrName, Value}) -> {attribute, 1, AttrName, Value} end,
     CustomAttrs
   ),
-    
+     
   [
     {attribute, 1, module, Name},
     {attribute, 1, file, {Filename, 1}},

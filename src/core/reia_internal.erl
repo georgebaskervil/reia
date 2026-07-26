@@ -13,7 +13,7 @@
   load_submodule/2,
   load_core/0,
   load_stdlib/0,
-  print_error/2,
+  print_error/3,
   invoke_callable/3
 ]).
 -include("reia_types.hrl").
@@ -69,7 +69,7 @@ execute_file([Filename]) when is_atom(Filename) ->
 execute_file(Filename) ->
   try
     reia:load(Filename)
-  catch Class:Error ->
+  catch Class:Error:StackTrace ->
     case Error of
       #reia_object{} ->
         #reia_string{elements=Elements} = reia:invoke(Error, to_s, {}),
@@ -79,7 +79,7 @@ execute_file(Filename) ->
       {error, {Line, Message}} ->
         io:format("~s:~w: ~s~n", [Filename, Line, Message]);
       _ ->
-        print_error(Class, Error)
+        print_error(Class, Error, StackTrace)
     end
   end.
 
@@ -146,14 +146,22 @@ base_directory() ->
   end.
   
 % Display errors and stack traces for unhandled Erlang exceptions
-print_error(Class, Reason) ->
-  PF = fun(Term, I) ->
-    io_lib:format("~." ++ integer_to_list(I) ++ "P", [Term, 50])
-  end,
-  StackTrace = erlang:get_stacktrace(),
-  StackFun = fun(M, _F, _A) -> (M == erl_eval) or (M == ?MODULE) end,
-  Error = lib:format_exception(1, Class, Reason, StackTrace, StackFun, PF),
-  io:format("~s~n", [Error]).
+print_error(Class, Reason, StackTrace) ->
+  io:format("~w:~w~n", [Class, Reason]),
+  lists:foreach(fun(Frame) ->
+    case Frame of
+      {Module, Function, Arity, Location} when is_integer(Arity) ->
+        File = proplists:get_value(file, Location, ""),
+        Line = proplists:get_value(line, Location, 0),
+        io:format("  ~w:~w/~w (~s:~w)~n", [Module, Function, Arity, File, Line]);
+      {Module, Function, Args, Location} when is_list(Args) ->
+        File = proplists:get_value(file, Location, ""),
+        Line = proplists:get_value(line, Location, 0),
+        io:format("  ~w:~w/~w (~s:~w)~n", [Module, Function, length(Args), File, Line]);
+      _ ->
+        io:format("  ~w~n", [Frame])
+    end
+  end, StackTrace).
   
 % Handle calls to non-lambda callable types
 invoke_callable(Callable, Args, Block) ->
