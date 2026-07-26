@@ -53,14 +53,27 @@ compile_erlang() {
   echo "${BLUE}Compiling Erlang source files...${NC}"
   mkdir -p ebin benchmarks/ebin
   
-  # Compile generated parser without debug_info (large file)
-  erlc -o ebin src/compiler/reia_scan.erl
-  erlc -o ebin src/compiler/reia_parse.erl
+  # Ensure scanner and parser are generated
+  if [ ! -f "src/compiler/reia_scan.erl" ]; then
+    generate_scanner
+  fi
+  if [ ! -f "src/compiler/reia_parse.erl" ]; then
+    generate_parser
+  fi
+  if [ ! -f "src/json/reia_json_grammar.erl" ]; then
+    generate_json_parser
+  fi
   
-  # Compile other Erlang files with debug info
+  # Compile all Erlang files
   for f in src/compiler/*.erl src/core/*.erl src/json/*.erl src/builtins/*.erl; do
-    if [ -f "$f" ] && [ "$(basename $f)" != "reia_parse.erl" ] && [ "$(basename $f)" != "reia_scan.erl" ]; then
-      erlc +debug_info -o ebin "$f"
+    if [ -f "$f" ]; then
+      BASENAME=$(basename "$f")
+      # Skip quiet files (large generated parsers)
+      if [ "$BASENAME" = "reia_parse.erl" ] || [ "$BASENAME" = "reia_scan.erl" ]; then
+        erlc -o ebin "$f"
+      else
+        erlc +debug_info -o ebin "$f"
+      fi
     fi
   done
 }
@@ -70,14 +83,23 @@ compile_reia() {
   echo "${BLUE}Compiling Reia source files...${NC}"
   mkdir -p ebin lib
   
-  for f in src/builtins/*.re src/core/*.re lib/*.re; do
+  # Compile builtins and core to ebin
+  for f in src/builtins/*.re src/core/*.re; do
     if [ -f "$f" ]; then
-      OUTPUT="$(dirname $f | sed 's|src|ebin|')/$(basename $f .re).reb"
-      if [ "$(dirname $f)" = "lib" ]; then
-        OUTPUT="lib/$(basename $f .re).reb"
-      fi
-      mkdir -p "$(dirname $OUTPUT)"
-      bin/reiac -o "$OUTPUT" "$f"
+      BASENAME=$(basename "$f" .re)
+      OUTPUT="ebin/${BASENAME}.reb"
+      echo "  Compiling $f -> $OUTPUT"
+      bin/reiac -o "$OUTPUT" "$f" || true
+    fi
+  done
+  
+  # Compile lib to lib
+  for f in lib/*.re; do
+    if [ -f "$f" ]; then
+      BASENAME=$(basename "$f" .re)
+      OUTPUT="lib/${BASENAME}.reb"
+      echo "  Compiling $f -> $OUTPUT"
+      bin/reiac -o "$OUTPUT" "$f" || true
     fi
   done
 }
