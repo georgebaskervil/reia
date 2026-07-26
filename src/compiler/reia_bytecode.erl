@@ -74,10 +74,9 @@ module_header(Name, Filename, CustomAttrs, Options) ->
     fun({AttrName, Value}) -> {attribute, 1, AttrName, Value} end,
     CustomAttrs
   ),
-     
+      
   [
     {attribute, 1, module, Name},
-    {attribute, 1, file, {Filename, 1}},
     {attribute, 1, code, Options#compile_options.code},
     ParentAttr|ErlAttrs
   ].
@@ -101,7 +100,7 @@ unwrapped_module(Exprs) ->
   end.
 
 compile_options(Options) ->
-  ErlOptions = Options#compile_options.erlc_options,
+  ErlOptions = [no_lint|Options#compile_options.erlc_options],
   HiPEAvailable = hipe_available(),
   if
     Options#compile_options.autohipe and HiPEAvailable -> [native|ErlOptions];
