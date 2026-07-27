@@ -1,0 +1,14 @@
+{application, reia, [
+  {description, "Reia - Ruby-like scripting language for the Erlang VM"},
+  {vsn, "0.4.0"},
+  {registered, []},
+  {applications, [
+    kernel,
+    stdlib
+  ]},
+  {env, []},
+  {modules, []},
+  {maintainers, []},
+  {licenses, ["MIT"]},
+  {links, [{"GitHub", "https://github.com/georgebaskervil/reia"}]}
+]}.

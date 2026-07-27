@@ -28,13 +28,12 @@ compile_directory(InputDir, OutputDir) ->
 compile_reia_file(InputFile, OutputDir) ->
   BaseName = filename:basename(InputFile, ".re"),
   OutputFile = filename:join(OutputDir, BaseName ++ ".reb"),
-  Cmd = io_lib:format("./bin/reiac -o ~s ~s", [OutputFile, InputFile]),
   io:format("Compiling: ~s -> ~s~n", [InputFile, OutputFile]),
-  case os:cmd(Cmd) of
-    [] -> 
+  case reia_internal:compile(InputFile, OutputFile) of
+    ok -> 
       io:format("  ✓ Success~n");
     Error -> 
-      io:format("  ⚠ Warning: ~s~n", [Error])
+      io:format("  ⚠ Warning: ~p~n", [Error])
   end.
 
 ensure_output_dir(Dir) ->

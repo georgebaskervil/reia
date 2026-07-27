@@ -19,7 +19,6 @@ Building Reia
 
 - **Erlang 27, 28, or 29+** (R13B or later; tested with Erlang 29.0.3)
 - **rebar3** - Erlang build tool
-- **Standard POSIX shell** (bash, sh) - for build.sh wrapper
 - No other dependencies (Ruby/Rake no longer required!)
 
 Get Erlang from: https://www.erlang.org/
@@ -28,38 +27,52 @@ Get rebar3 from: https://rebar3.org/
 ### Quick Start
 
 ```bash
-# Build the project (uses rebar3)
-./build.sh build
+# Build the project
+rebar3 compile
+
+# Run the Reia REPL
+./_build/default/bin/reia --ire
+
+# Run a Reia script
+./_build/default/bin/reia script.re
 
 # Run tests (101 assertions)
-./build.sh test
+rebar3 compile && ./_build/default/bin/reia test/runner.re
 
 # Run benchmarks
-./build.sh benchmark
-
-# Clean build artifacts
-./build.sh clean
+rebar3 compile && ./_build/default/bin/reia benchmarks/runner.re
 ```
 
-### Build Targets
+### Build Commands
 
-- `./build.sh build` - Compile all source via rebar3 (default)
-- `./build.sh test` - Build and run the test suite
-- `./build.sh benchmark` - Build and run benchmarks
-- `./build.sh clean` - Remove all build artifacts
+- `rebar3 compile` - Compile all source (Erlang, Leex, Yecc, and Reia)
+- `rebar3 escript` - Build standalone reia executable to _build/default/bin/reia
+- `rebar3 clean` - Remove all build artifacts
 
-Alternatively, use rebar3 directly:
+Or use the convenience wrapper:
 ```bash
-rebar3 compile    # Compile Erlang, Leex, Yecc, and Reia source
-rebar3 clean      # Clean build artifacts
+./build.sh compile   # Same as rebar3 compile
+./build.sh test      # Compile and run tests
+./build.sh benchmark # Compile and run benchmarks
+./build.sh clean     # Clean build artifacts
+```
+
+### Reia Executable Usage
+
+Once built, the reia executable provides:
+```bash
+reia script.re           # Run a Reia script
+reia --ire               # Start interactive REPL
+reia -i                  # Short form for --ire
+reia -o output.reb file.re  # Compile file to bytecode
 ```
 
 ### What's Changed in 2026
 
 Recent updates for modern Erlang compatibility:
-- ✅ Migrated to rebar3 for unified build system
-- ✅ Removed complex Rakefile
-- ✅ Fixed Erlang 29 compatibility issues (parser, bytecode, stacktrace)
+- ✅ Consolidated all tooling under rebar3 (single build system)
+- ✅ Created standalone reia executable (replaces multiple shell scripts)
+- ✅ Removed Rakefile, fixed Erlang 29 compatibility
 - ✅ All tests passing (101 assertions, 0 failures)
 - ✅ No Ruby/Rake dependency required
 
