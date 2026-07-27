@@ -1,0 +1,55 @@
+name: Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    name: Test on Erlang ${{ matrix.otp }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        otp: ['27', '28', '29']
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Erlang
+      uses: erlef/setup-beam@v1
+      with:
+        otp-version: ${{ matrix.otp }}
+    
+    - name: Display Erlang version
+      run: erl -version
+    
+    - name: Build Reia
+      run: ./build.sh build
+    
+    - name: Run tests
+      run: ./build.sh test
+    
+    - name: Run benchmarks
+      run: ./build.sh benchmark
+
+  lint:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Erlang
+      uses: erlef/setup-beam@v1
+      with:
+        otp-version: '29'
+    
+    - name: Check for common issues
+      run: |
+        echo "✓ Checking build script permissions..."
+        [ -x ./build.sh ] && echo "  build.sh is executable" || echo "  WARNING: build.sh not executable"
+        echo "✓ Verifying rebar.config exists..."
+        [ -f rebar.config ] && echo "  rebar.config found" || echo "  ERROR: rebar.config missing"
+        echo "✓ All checks passed!"

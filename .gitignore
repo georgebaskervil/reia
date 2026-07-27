@@ -1,3 +1,34 @@
 *.reb
 *.rbc
 erl_crash.dump
+
+# Rebar3 build artifacts
+_build/
+.rebar3/
+*.crashdump
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+*.o
+*.a
+*.so
+
+# Temporary files
+*.tmp
+.#*
+
+# Generated files (tracked when intentional, but can appear as artifacts)
+/src/compiler/reia_scan.erl
+/src/compiler/reia_parse.erl
+/src/json/reia_json_grammar.erl
+

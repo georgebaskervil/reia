@@ -18,15 +18,17 @@ Building Reia
 ### Requirements
 
 - **Erlang 27, 28, or 29+** (R13B or later; tested with Erlang 29.0.3)
-- **Standard POSIX shell** (bash, sh)
+- **rebar3** - Erlang build tool
+- **Standard POSIX shell** (bash, sh) - for build.sh wrapper
 - No other dependencies (Ruby/Rake no longer required!)
 
 Get Erlang from: https://www.erlang.org/
+Get rebar3 from: https://rebar3.org/
 
 ### Quick Start
 
 ```bash
-# Build the project
+# Build the project (uses rebar3)
 ./build.sh build
 
 # Run tests (101 assertions)
@@ -41,17 +43,22 @@ Get Erlang from: https://www.erlang.org/
 
 ### Build Targets
 
-- `./build.sh build` - Compile all Erlang and Reia source files (default)
+- `./build.sh build` - Compile all source via rebar3 (default)
 - `./build.sh test` - Build and run the test suite
 - `./build.sh benchmark` - Build and run benchmarks
-- `./build.sh scanner` - Generate and compile lexer only
-- `./build.sh parser` - Generate and compile parser only
 - `./build.sh clean` - Remove all build artifacts
+
+Alternatively, use rebar3 directly:
+```bash
+rebar3 compile    # Compile Erlang, Leex, Yecc, and Reia source
+rebar3 clean      # Clean build artifacts
+```
 
 ### What's Changed in 2026
 
 Recent updates for modern Erlang compatibility:
-- ✅ Removed Rakefile, now using portable `build.sh` script
+- ✅ Migrated to rebar3 for unified build system
+- ✅ Removed complex Rakefile
 - ✅ Fixed Erlang 29 compatibility issues (parser, bytecode, stacktrace)
 - ✅ All tests passing (101 assertions, 0 failures)
 - ✅ No Ruby/Rake dependency required
