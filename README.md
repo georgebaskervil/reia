@@ -33,17 +33,17 @@ rebar3 compile
 # Build standalone executable
 rebar3 escript
 
+# Run tests (101 assertions)
+make test
+
+# Run benchmarks
+make benchmark
+
 # Run the Reia REPL
 ./_build/default/bin/reia --ire
 
 # Run a Reia script
 ./_build/default/bin/reia script.re
-
-# Run tests (101 assertions)
-./_build/default/bin/reia test/runner.re
-
-# Run benchmarks
-./_build/default/bin/reia benchmarks/runner.re
 ```
 
 ### Build Commands
@@ -54,16 +54,11 @@ rebar3 escript
 
 ### Test and Benchmark Commands
 
-Reia uses custom test/benchmark runners (not eunit). Use the build script as a convenience:
+Reia uses custom test/benchmark runners (not eunit):
 
-- `./build.sh test` - Run test suite (compiles + executes test/runner.re)
-- `./build.sh benchmark` - Run benchmarks (compiles + executes benchmarks/runner.re)
-
-Or run manually:
-```bash
-rebar3 compile && ./_build/default/bin/reia test/runner.re
-rebar3 compile && ./_build/default/bin/reia benchmarks/runner.re
-```
+- `make test` - Run test suite (compiles + executes test/runner.re)
+- `make benchmark` - Run benchmarks (compiles + executes benchmarks/runner.re)
+- `make all` - Build everything
 
 ### Reia Executable Usage
 
