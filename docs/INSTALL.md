@@ -137,7 +137,7 @@ This creates `_build/default/bin/reia` - the standalone Reia executable.
 ./_build/default/bin/reia --ire
 
 # Or use the convenience wrapper
-./build.sh test
+./_build/default/bin/reia test/runner.re
 ```
 
 ### Optional: Install reia executable to PATH
@@ -205,8 +205,8 @@ rebar3 clean
 rebar3 compile
 
 # Or use the convenience wrapper
-./build.sh clean
-./build.sh build
+rebar3 clean
+rebar3 compile
 ```
 
 ### Tests show "0 tests" or other issues
@@ -314,7 +314,7 @@ ls examples/
 rebar3 compile && ./_build/default/bin/reia benchmarks/runner.re
 
 # Or use convenience wrapper:
-./build.sh benchmark
+./_build/default/bin/reia benchmarks/runner.re
 ```
 
 Expected output:
@@ -348,21 +348,20 @@ sleep Reia:10.010873s Erlang:10.010051s that's 1.000082x slower
 # Example: Using specific Erlang
 /opt/erlang-29/bin/erl -version
 export PATH="/opt/erlang-29/bin:$PATH"
-./build.sh build
+rebar3 compile
 ```
 
 ### Customizing Build
 
 ```bash
 # Clean build only
-./build.sh clean
-
-# Build specific targets
-./build.sh parser    # Parse tables only
-./build.sh scanner   # Lexer only
+rebar3 clean
 
 # Quick development rebuild
-./build.sh build
+rebar3 compile
+
+# Rebuild after changes
+rebar3 compile
 ```
 
 ### Development Environment Setup
@@ -373,14 +372,14 @@ git clone https://github.com/georgebaskervil/reia.git
 cd reia
 git config core.filemode true
 
-# Make scripts executable
-chmod +x build.sh bin/reia bin/ire bin/reiac
-
 # First build
-./build.sh build
+rebar3 compile
+
+# Create standalone executable
+rebar3 escript
 
 # Watch for changes (not built-in, but you can use inotify-tools)
-# Or just run ./build.sh build when you make changes
+# Or just run rebar3 compile when you make changes
 ```
 
 ## Uninstall

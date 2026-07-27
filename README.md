@@ -30,6 +30,9 @@ Get rebar3 from: https://rebar3.org/
 # Build the project
 rebar3 compile
 
+# Build standalone executable
+rebar3 escript
+
 # Run the Reia REPL
 ./_build/default/bin/reia --ire
 
@@ -37,25 +40,17 @@ rebar3 compile
 ./_build/default/bin/reia script.re
 
 # Run tests (101 assertions)
-rebar3 compile && ./_build/default/bin/reia test/runner.re
+./_build/default/bin/reia test/runner.re
 
 # Run benchmarks
-rebar3 compile && ./_build/default/bin/reia benchmarks/runner.re
+./_build/default/bin/reia benchmarks/runner.re
 ```
 
 ### Build Commands
 
 - `rebar3 compile` - Compile all source (Erlang, Leex, Yecc, and Reia)
-- `rebar3 escript` - Build standalone reia executable to _build/default/bin/reia
+- `rebar3 escript` - Build standalone reia executable to `_build/default/bin/reia`
 - `rebar3 clean` - Remove all build artifacts
-
-Or use the convenience wrapper:
-```bash
-./build.sh compile   # Same as rebar3 compile
-./build.sh test      # Compile and run tests
-./build.sh benchmark # Compile and run benchmarks
-./build.sh clean     # Clean build artifacts
-```
 
 ### Reia Executable Usage
 
