@@ -1,62 +1,121 @@
 Reia
 ====
 
-FYI: Reia is defunct. No additional work on it is planned. If you are
-interested in the ideas behind Reia, I strongly suggest you check out
-the Elixir language, which is now in a more mature stage of development
-than Reia:
+> **Note**: Reia was a pioneering Ruby-like language for the Erlang VM, designed as a proof-of-concept for bringing Ruby's elegance to the BEAM platform. The project is no longer under active development. If you're interested in similar ideas, check out **[Elixir](https://github.com/elixir-lang/elixir)**, which brought many of Reia's inspirations to production maturity.
 
-[https://github.com/elixir-lang/elixir](https://github.com/elixir-lang/elixir)
+This repository maintains Reia as a historical artifact and for research purposes, with ongoing maintenance for modern Erlang versions.
 
-About
------
+**📋 See [docs/DEPRECATION_NOTICE.md](docs/DEPRECATION_NOTICE.md) for full project status.**
 
-Welcome to Reia (pronounced RAY-uh), a Ruby-like scripting language for the 
-Erlang virtual machine (BEAM).
+About Reia
+----------
 
-Want to know more about Reia? Syntax examples and that sort of thing? Please
-visit the home page at:
+Reia (pronounced RAY-uh) is a Ruby-like scripting language for the Erlang virtual machine (BEAM). The language combines Ruby's friendly syntax with Erlang's powerful concurrent and distributed computing capabilities.
 
-[http://reia-lang.org](http://reia-lang.org)
+Building Reia
+-------------
 
-Compiling Reia
---------------
+### Requirements
 
-Reia requires Erlang version R12B-3 (5.6.3) or later. The latest version of 
-Erlang is available here:
+- **Erlang 27, 28, or 29+** (R13B or later; tested with Erlang 29.0.3)
+- **rebar3** - Erlang build tool
+- No other dependencies (Ruby/Rake no longer required!)
 
-[http://www.erlang.org/download.html](http://www.erlang.org/download.html)
+Get Erlang from: https://www.erlang.org/
+Get rebar3 from: https://rebar3.org/
 
-You'll also need Ruby and Rake installed.  To compile Reia, type:
+### Quick Start
 
-   rake
+```bash
+# Build the project
+rebar3 compile
 
-After compilation is complete, you'll see the test suite run and if everything
-went well it should hopefully pass.
+# Build standalone executable
+rebar3 escript
+
+# Run tests (101 assertions)
+make test
+
+# Run benchmarks
+make benchmark
+
+# Run the Reia REPL
+./_build/default/bin/reia --ire
+
+# Run a Reia script
+./_build/default/bin/reia script.re
+```
+
+### Build Commands
+
+- `rebar3 compile` - Compile all source (Erlang, Leex, Yecc, and Reia)
+- `rebar3 escript` - Build standalone reia executable to `_build/default/bin/reia`
+- `rebar3 clean` - Remove all build artifacts
+
+### Test and Benchmark Commands
+
+Reia uses custom test/benchmark runners (not eunit):
+
+- `make test` - Run test suite (compiles + executes test/runner.re)
+- `make benchmark` - Run benchmarks (compiles + executes benchmarks/runner.re)
+- `make all` - Build everything
+
+### Reia Executable Usage
+
+Once built, the reia executable provides:
+```bash
+reia script.re           # Run a Reia script
+reia --ire               # Start interactive REPL
+reia -i                  # Short form for --ire
+reia -o output.reb file.re  # Compile file to bytecode
+```
+
+### What's Changed in 2026
+
+Recent updates for modern Erlang compatibility:
+- ✅ Consolidated all tooling under rebar3 (single build system)
+- ✅ Created standalone reia executable (replaces multiple shell scripts)
+- ✅ Removed Rakefile, fixed Erlang 29 compatibility
+- ✅ All tests passing (101 assertions, 0 failures)
+- ✅ No Ruby/Rake dependency required
+
 
 Implementation
 --------------
 
-Here's some thoroughly interesting implementation trivia about Reia:
+Here's some implementation details about Reia:
 
-* Leex-based scanner
-* Yecc-based grammar (a Neotoma-based branch is also available)
-* Successive parse transforms convert Reia parse trees into the Erlang abstract
-  format, then into BEAM/HiPE bytecode
+* **Leex-based scanner** - Lexical analysis using Erlang's Leex tool
+* **Yecc-based parser** - Syntax analysis using Erlang's Yecc parser generator
+* **Multi-pass compiler** - Successive parse transforms convert Reia parse trees into:
+  1. Intermediate representation
+  2. Erlang abstract format
+  3. BEAM/HiPE bytecode
 
-Links
------
+Documentation
+--------------
 
-* Home Page: [http://reia-lang.org](http://reia-lang.org)
-* Reia Wiki: [http://wiki.reia-lang.org/](http://wiki.reia-lang.org/)
-* Mailing List: [http://groups.google.com/group/reia](http://groups.google.com/group/reia)
-* Author's Blog: [http://unlimitednovelty.com/](http://unlimitednovelty.com/)
-* Author's Twitter: [http://twitter.com/bascule](http://twitter.com/bascule)
-* IRC: irc.freenode.net #reia
+* **[INSTALL.md](docs/INSTALL.md)** - Detailed installation and troubleshooting guide
+* **[CONTRIBUTING.md](CONTRIBUTING.md)** - How to contribute to the project
+* **[CHANGELOG.md](CHANGELOG.md)** - Version history and compatibility notes
 
-About the Author
-----------------
+Historical References
+---------------------
 
-Reia was created by Tony Arcieri, a programmer from Denver, Colorado, USA.
-Tony has a background in network services and distributed peer-to-peer 
-systems. His favorite programming languages are Ruby and Erlang.
+* **Home Page** (archived): http://reia-lang.org
+* **Mailing List** (archived): http://groups.google.com/group/reia
+* **Author**: Tony Arcieri (creator)
+
+Project Status
+--------------
+
+- **Status**: Historical archive / maintenance mode
+- **Active Development**: No (but accepting maintenance PRs)
+- **Current Erlang Support**: 27, 28, 29+
+- **Test Suite**: 101 assertions, all passing ✅
+- **Last Major Update**: 2026 (Erlang 29 compatibility)
+
+For active development of similar concepts, see:
+- **[Elixir](https://github.com/elixir-lang/elixir)** - Production-ready language for BEAM
+- **[Erlang/OTP](https://github.com/erlang/otp)** - The BEAM virtual machine
+

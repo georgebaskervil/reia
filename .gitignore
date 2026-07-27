@@ -1,3 +1,29 @@
 *.reb
 *.rbc
 erl_crash.dump
+
+# Rebar3 build artifacts
+_build/
+.rebar3/
+*.crashdump
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+*.o
+*.a
+*.so
+
+# Temporary files
+*.tmp
+.#*
+

@@ -1,0 +1,16 @@
+{dialyzer, [
+  {warnings, [
+    unmatched_returns,
+    error_handling,
+    race_conditions,
+    underspecs,
+    overspecs,
+    unknown
+  ]},
+  {exclude_mods, [
+    reia_scan,
+    reia_parse,
+    reia_json_grammar
+  ]},
+  {get_warnings, true}
+]}.
