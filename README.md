@@ -52,6 +52,19 @@ rebar3 escript
 - `rebar3 escript` - Build standalone reia executable to `_build/default/bin/reia`
 - `rebar3 clean` - Remove all build artifacts
 
+### Test and Benchmark Commands
+
+Reia uses custom test/benchmark runners (not eunit). Use the build script as a convenience:
+
+- `./build.sh test` - Run test suite (compiles + executes test/runner.re)
+- `./build.sh benchmark` - Run benchmarks (compiles + executes benchmarks/runner.re)
+
+Or run manually:
+```bash
+rebar3 compile && ./_build/default/bin/reia test/runner.re
+rebar3 compile && ./_build/default/bin/reia benchmarks/runner.re
+```
+
 ### Reia Executable Usage
 
 Once built, the reia executable provides:
