@@ -80,34 +80,75 @@ cd reia
 2. Click "Code" → "Download ZIP"
 3. Extract the archive
 
-## Step 3: Build Reia
+## Step 3: Install rebar3
+
+rebar3 is the Erlang build tool that Reia uses.
+
+```bash
+# Download rebar3 binary (or see https://rebar3.org/ for alternatives)
+mkdir -p ~/.local/bin
+wget https://s3.amazonaws.com/rebar3/rebar3 -O ~/.local/bin/rebar3
+chmod +x ~/.local/bin/rebar3
+
+# Add to PATH (add this to your ~/.bashrc or ~/.zshrc)
+export PATH="~/.local/bin:$PATH"
+
+# Verify
+rebar3 version
+```
+
+Or use your package manager:
+```bash
+brew install rebar3      # macOS
+apt-get install rebar3   # Ubuntu/Debian
+```
+
+## Step 4: Build Reia
 
 ```bash
 cd reia
-./build.sh build
+rebar3 compile
 ```
 
 **Expected output:**
 ```
-Building Reia...
-Checking Erlang version...
-Erlang version 29.0.3 (ok)
-Generating scanner from reia_scan.xrl...
-Generating parser from reia_parse.yrl...
-Generating JSON parser from reia_json_grammar.yrl...
-Compiling Erlang source files...
+===> Verifying dependencies...
+===> Analyzing applications...
+===> Compiling reia
 Compiling Reia source files...
-Build complete!
+===> Building escript reia...
 ```
 
-## Step 4: Verify Installation
+## Step 5: Build the Reia Executable
+
+```bash
+rebar3 escript
+```
+
+This creates `_build/default/bin/reia` - the standalone Reia executable.
+
+## Step 6: Verify Installation
 
 ```bash
 # Run test suite (should see "101 assertions, 0 failures, 0 errors")
-./build.sh test
+./_build/default/bin/reia test/runner.re
 
-# Run benchmarks (optional)
-./build.sh benchmark
+# Run interactive REPL
+./_build/default/bin/reia --ire
+
+# Or use the convenience wrapper
+./build.sh test
+```
+
+### Optional: Install reia executable to PATH
+
+```bash
+cp _build/default/bin/reia ~/.local/bin/reia
+chmod +x ~/.local/bin/reia
+
+# Now you can run from anywhere:
+reia script.re
+reia --ire
 ```
 
 ## Troubleshooting
@@ -125,13 +166,18 @@ which erl
 export PATH="/opt/erlang/bin:$PATH"  # or your Erlang installation path
 ```
 
-### "build.sh: permission denied"
+### "rebar3: command not found"
 
-**Problem**: Build script is not executable
+**Problem**: rebar3 is not installed or not in PATH
 
 **Solution**:
 ```bash
-chmod +x build.sh
+# Verify rebar3 is installed
+which rebar3
+
+# If not found, install it (see Step 3 above)
+# Or add to PATH if installed elsewhere
+export PATH="/path/to/rebar3:$PATH"
 ```
 
 ### "Erlang version is too old"
@@ -148,18 +194,18 @@ brew upgrade erlang  # macOS
 apt-get upgrade erlang  # Ubuntu/Debian
 ```
 
-### Build fails with "undefined" errors
+### Build fails with errors
 
 **Problem**: Incomplete build or cached artifacts
 
 **Solution**:
 ```bash
 # Clean and rebuild
-./build.sh clean
-./build.sh build
+rebar3 clean
+rebar3 compile
 
-# Or completely remove build artifacts
-rm -rf ebin/ lib/*.reb src/compiler/reia_scan.erl src/compiler/reia_parse.erl
+# Or use the convenience wrapper
+./build.sh clean
 ./build.sh build
 ```
 
@@ -169,40 +215,31 @@ rm -rf ebin/ lib/*.reb src/compiler/reia_scan.erl src/compiler/reia_parse.erl
 
 **Solution**:
 ```bash
-# Verify your build worked
-ls -la ebin/*.reb | head -5
+# Rebuild from scratch
+rebar3 clean
+rebar3 compile
 
-# If empty, rebuild
-./build.sh clean
-./build.sh build
+# Verify compiled files
+ls -la _build/default/lib/reia/ebin/*.reb
 
-# Check for Erlang version issues
+# Run tests
+./_build/default/bin/reia test/runner.re
 erl -version
 ```
 
-### "No such file or directory: bin/reiac"
+### JSON parsing or compilation fails
 
-**Problem**: Reia compiler not available
-
-**Solution**:
-```bash
-# Verify build completed
-ls -la bin/reiac
-
-# If missing, rebuild with verbose output
-./build.sh build 2>&1 | tail -20
-```
-
-### JSON parsing fails
-
-**Problem**: JSON modules not compiled
+**Problem**: Source files not compiled properly
 
 **Solution**:
 ```bash
 # Rebuild from scratch
-./build.sh clean
-./build.sh build
-./build.sh test
+rebar3 clean
+rebar3 compile
+rebar3 escript
+
+# Run tests to verify
+./_build/default/bin/reia test/runner.re
 ```
 
 ## Platform-Specific Notes
@@ -237,10 +274,13 @@ Reia builds successfully in containerized environments:
 ```dockerfile
 FROM ubuntu:22.04
 RUN apt-get update && apt-get install -y erlang git
+RUN mkdir -p ~/.local/bin && wget https://s3.amazonaws.com/rebar3/rebar3 -O ~/.local/bin/rebar3 && chmod +x ~/.local/bin/rebar3
+ENV PATH="~/.local/bin:$PATH"
 WORKDIR /app
 COPY . .
-RUN ./build.sh build
-CMD ["./build.sh", "test"]
+RUN rebar3 compile
+RUN rebar3 escript
+CMD ["./_build/default/bin/reia", "test/runner.re"]
 ```
 
 ## Next Steps
@@ -254,7 +294,10 @@ Create `hello.re`:
 
 Run it:
 ```bash
-bin/reia hello.re
+./_build/default/bin/reia hello.re
+
+# Or if installed to PATH:
+reia hello.re
 ```
 
 ### Explore Examples
@@ -262,11 +305,15 @@ bin/reia hello.re
 Check out example programs:
 ```bash
 ls examples/
+./_build/default/bin/reia examples/hello.re
 ```
 
 ### Run Benchmarks
 
 ```bash
+rebar3 compile && ./_build/default/bin/reia benchmarks/runner.re
+
+# Or use convenience wrapper:
 ./build.sh benchmark
 ```
 

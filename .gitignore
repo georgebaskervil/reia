@@ -27,8 +27,3 @@ Thumbs.db
 *.tmp
 .#*
 
-# Generated files (tracked when intentional, but can appear as artifacts)
-/src/compiler/reia_scan.erl
-/src/compiler/reia_parse.erl
-/src/json/reia_json_grammar.erl
-
